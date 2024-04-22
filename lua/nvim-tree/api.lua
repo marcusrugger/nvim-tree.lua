@@ -1,6 +1,7 @@
 local lib = require "nvim-tree.lib"
 local view = require "nvim-tree.view"
 local utils = require "nvim-tree.utils"
+local core = require "nvim-tree.core"
 local actions = require "nvim-tree.actions"
 local appearance_diagnostics = require "nvim-tree.appearance.diagnostics"
 local events = require "nvim-tree.events"
@@ -170,7 +171,8 @@ Api.fs.copy.relative_path = wrap_node(actions.fs.copy_paste.copy_path)
 ---@param mode string
 ---@param node table
 local function edit(mode, node)
-  local path = node.absolute_path
+  local absolute_path = node.absolute_path
+  local path = utils.path_relative(absolute_path, core.get_cwd())
   if node.link_to and not node.nodes then
     path = node.link_to
   end
