@@ -168,11 +168,18 @@ Api.fs.copy.filename = wrap_node(actions.fs.copy_paste.copy_filename)
 Api.fs.copy.basename = wrap_node(actions.fs.copy_paste.copy_basename)
 Api.fs.copy.relative_path = wrap_node(actions.fs.copy_paste.copy_path)
 
+-- Use relative paths in edit command
+Api.config.experimental = {}
+Api.config.experimental.edit = {}
+Api.config.experimental.edit = { relative_path = true }
+
 ---@param mode string
 ---@param node table
 local function edit(mode, node)
-  local absolute_path = node.absolute_path
-  local path = utils.path_relative(absolute_path, core.get_cwd())
+  local path = node.absolute_path
+  if Api.config.experimental.edit.relative_path then
+    path = utils.path_relative(path, core.get_cwd())
+  end
   if node.link_to and not node.nodes then
     path = node.link_to
   end
