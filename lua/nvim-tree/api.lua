@@ -177,12 +177,13 @@ Api.config.experimental.edit = { relative_path = true }
 ---@param node table
 local function edit(mode, node)
   local path = node.absolute_path
+  print("path", path)
   if Api.config.experimental.edit.relative_path then
-    path = utils.path_relative(path, core.get_cwd())
+    path = utils.calculate_relative_path(path, core.get_cwd())
   end
-  if node.link_to and not node.nodes then
-    path = node.link_to
-  end
+  -- if node.link_to and not node.nodes then
+  --   path = node.link_to
+  -- end
   actions.node.open_file.fn(mode, path)
 end
 

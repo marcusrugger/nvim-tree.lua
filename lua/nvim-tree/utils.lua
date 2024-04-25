@@ -59,6 +59,58 @@ function M.path_basename(path)
   return path:sub(i + 1, #path)
 end
 
+--
+--- Get a path relative to another path.
+---@param path string
+---@param relative_to string|nil
+---@return string
+function M.calculate_relative_path(path, relative_to)
+  if (not path) or (not relative_to) then
+    return path
+  end
+
+  -- Normalize paths by removing trailing slashes
+  path = path:gsub("/+$", "")
+  relative_to = relative_to:gsub("/+$", "")
+
+  -- Split paths into components
+  local path_components = {}
+  local base_components = {}
+
+  for component in path:gmatch("[^/]+") do
+      table.insert(path_components, component)
+  end
+
+  for component in relative_to:gmatch("[^/]+") do
+      table.insert(base_components, component)
+  end
+
+  -- Find the common part of the path
+  local common_length = 0
+  for i = 1, math.min(#path_components, #base_components) do
+      if path_components[i] == base_components[i] then
+          common_length = i
+      else
+          break
+      end
+  end
+
+  -- Calculate how many directories to go up from relative_to
+  local result_path = {}
+  for i = common_length + 1, #base_components do
+      table.insert(result_path, "..")
+  end
+
+  -- Append the non-common parts of the path
+  for i = common_length + 1, #path_components do
+      table.insert(result_path, path_components[i])
+  end
+
+  -- Return the result path as a string
+  return table.concat(result_path, "/")
+end
+
+
 --- Get a path relative to another path.
 ---@param path string
 ---@param relative_to string|nil
